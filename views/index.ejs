@@ -1,0 +1,74 @@
+<html lang="en">
+
+<head>
+    <%- include('partials/head'); %>
+</head>
+
+<body>
+    <header>
+        <%- include('partials/header'); %>
+            <%- include('partials/nav'); %>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="hero-content">
+                <h2>Welcome to CSE Motors</h2>
+                <p>Your one-stop shop for all your automotive needs.</p>
+                <button class="cta-button">Browse Vehicles</button>
+            </div>
+            <img src="/images/hero-image.jpg" alt="Car on display">
+        </section>
+
+        <section class="featured-vehicles">
+            <h2>Featured Vehicles</h2>
+            <div class="vehicle-grid">
+                <div class="vehicle-card">
+                    <img src="/images/vehicle1.jpg" alt="Featured Vehicle 1">
+                    <h3>Vehicle 1</h3>
+                    <p>Description of Vehicle 1.</p>
+                </div>
+                <div class="vehicle-card">
+                    <img src="/images/vehicle2.jpg" alt="Featured Vehicle 2">
+                    <h3>Vehicle 2</h3>
+                    <p>Description of Vehicle 2.</p>
+                </div>
+                <div class="vehicle-card">
+                    <img src="/images/vehicle3.jpg" alt="Featured Vehicle 3">
+                    <h3>Vehicle 3</h3>
+                    <p>Description of Vehicle 3.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="services-section">
+            <h2>Our Services</h2>
+            <div class="service-grid">
+                <div class="service-card">
+                    <h3>Service 1</h3>
+                    <p>Description of Service 1.</p>
+                </div>
+                <div class="service-card">
+                    <h3>Service 2</h3>
+                    <p>Description of Service 2.</p>
+                </div>
+                <div class="service-card">
+                    <h3>Service 3</h3>
+                    <p>Description of Service 3.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="call-to-action">
+            <h2>Ready to Get Started?</h2>
+            <p>Contact us today to schedule a test drive or service appointment.</p>
+            <button class="cta-button">Contact Us</button>
+        </section>
+    </main>
+
+    <footer>
+        <%- include('partials/footer'); %>
+    </footer>
+
+    <script src="/js/main.js"></script>
+</body>
