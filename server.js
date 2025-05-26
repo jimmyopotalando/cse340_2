@@ -45,19 +45,27 @@ app.listen(port, () => {
 
 
 
-// 404 handler
-app.use((req, res, next) => {
-  res.status(404).render('errors/404', {
-    title: 'Page Not Found',
-    nav: await getNav(),
-  });
-});
+const express = require('express');
+const app = express();
+const utilities = require('./utilities');
 
-// 500 error handler
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).render('errors/500', {
-    title: 'Server Error',
-    nav: await getNav(),
+// other setup code...
+
+async function startServer() {
+  const nav = await utilities.getNav();
+
+  // Make nav available to all views
+  app.use((req, res, next) => {
+    res.locals.nav = nav;
+    next();
   });
-});
+
+  // Start listening
+  const PORT = process.env.PORT || 3000;
+  app.listen(PORT, () => {
+    console.log(`App running on port ${PORT}`);
+  });
+}
+
+startServer();
+
