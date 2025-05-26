@@ -1,0 +1,31 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "database": "coursedb_rebuild",
+            "username": "coursedb_rebuild_user",
+            "name": "dpg-d0n3coali9vc7381v7i0-a"
+        },
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "coursedb_render",
+            "database": "coursedb_rebuild",
+            "username": "coursedb_rebuild_user"
+        },
+        {
+            "previewLimit": 50,
+            "server": "dpg-d0n3coali9vc7381v7i0-a.oregon-postgres.render.com",
+            "port": 5432,
+            "driver": "PostgreSQL",
+            "name": "coursedb_render",
+            "database": "coursedb_rebuild",
+            "username": "coursedb_rebuild_user"
+        }
+    ]
+}

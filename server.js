@@ -42,3 +42,22 @@ app.listen(port, () => {
   console.log(`app listening on ${host}:${port}`)
 })
  
+
+
+
+// 404 handler
+app.use((req, res, next) => {
+  res.status(404).render('errors/404', {
+    title: 'Page Not Found',
+    nav: await getNav(),
+  });
+});
+
+// 500 error handler
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).render('errors/500', {
+    title: 'Server Error',
+    nav: await getNav(),
+  });
+});

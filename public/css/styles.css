@@ -235,3 +235,27 @@
         padding: 15px 30px;
       }
     }
+
+
+
+
+        .vehicle-detail {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1rem;
+        }
+    
+        .vehicle-detail img {
+          flex: 1 1 300px;
+          max-width: 100%;
+        }
+    
+        .vehicle-info {
+          flex: 1 1 300px;
+        }
+    
+        @media (max-width: 768px) {
+          .vehicle-detail {
+            flex-direction: column;
+          }
+        }
