@@ -1,71 +1,70 @@
-/* ******************************************
- * This server.js file is the primary file of the
- * application. It is used to control the project.
- *******************************************/
-/* ***********************
- * Require Statements
- *************************/
+
 const express = require("express")
 const expressLayouts = require("express-ejs-layouts")
-const env = require("dotenv").config()
+require("dotenv").config()
 const static = require("./routes/static")
- 
+const invRoute = require("./routes/inventoryRoute") 
+const baseController = require("./controllers/baseController") 
+const utilities = require("./utilities")
+
 const app = express()
- 
-/* ***********************
- * View Engine and Templates
- *************************/
-app.set("view engine", "ejs")
+
+
+app.use(express.static("public")) 
 app.use(expressLayouts)
-app.set("layout", "./layouts/layout") // not at view root
- 
-/* ***********************
- * Routes
- *************************/
-app.use(static)
-//Index route
-app.get("/", function(req, res){
-  res.render("index",{title: "Home"})
-})
- 
-/* ***********************
- * Local Server Information
- * Values from .env (environment) file
- *************************/
-const port = process.env.PORT
-const host = process.env.HOST
- 
-/* ***********************
- * Log statement to confirm server operation
- *************************/
-app.listen(port, () => {
-  console.log(`app listening on ${host}:${port}`)
-})
- 
+app.set("view engine", "ejs")
+app.set("layout", "./layouts/layout") 
 
 
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
-
-
-const utilities = require('./utilities');
-
-// other setup code...
 
 async function startServer() {
-  const nav = await utilities.getNav();
+  try {
+    const nav = await utilities.getNav()
 
-  // Make nav available to all views
-  app.use((req, res, next) => {
-    res.locals.nav = nav;
-    next();
-  });
+    
+    app.use((req, res, next) => {
+      res.locals.nav = nav
+      next()
+    })
 
-  // Start listening
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`App running on port ${PORT}`);
-  });
+    
+    app.use(static)
+    app.use("/inventory", invRoute)
+
+    
+    app.get("/", (req, res) => {
+      res.render("index", { title: "Home" })
+    })
+
+    
+
+    
+    app.use((req, res, next) => {
+      res.status(404).render("errors/404", {
+        title: "Page Not Found"
+      })
+    })
+
+    
+    app.use((err, req, res, next) => {
+      console.error(err.stack)
+      res.status(500).render("errors/500", {
+        title: "Server Error"
+      })
+    })
+
+    
+    const port = process.env.PORT || 3000
+    app.listen(port, () => {
+      console.log(`App listening on http://localhost:${port}`)
+    })
+
+  } catch (err) {
+    console.error("Server failed to start:", err)
+  }
 }
 
-startServer();
-
+startServer()
