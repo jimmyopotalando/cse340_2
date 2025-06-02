@@ -1,15 +1,16 @@
 // controllers/baseController.js
 
-// Render the home page
+/**
+ * Controller to build and render the home page.
+ */
 const buildHome = (req, res) => {
     res.render("index", {
-      title: "Welcome",
-      message: "Welcome to the Vehicle Inventory App",
+      title: "Welcome to the Vehicle Inventory App",
+      message: "Explore our inventory and manage vehicle records efficiently."
     });
   };
   
-  // Export the function
   module.exports = {
-    buildHome,
+    buildHome
   };
   
