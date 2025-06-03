@@ -1,11 +1,15 @@
 // server.js
+const inventoryRoutes = require("./routes/invRoute")
+app.use("/inv", inventoryRoutes)
+
+
 
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 require("dotenv").config();
 
 const staticRoutes = require("./routes/static");
-const invRoutes = require("./routes/inventoryRoute");
+const invRoutes = require("./routes/invRoute");
 const baseController = require("./controllers/baseController");
 const utilities = require("./utilities");
 

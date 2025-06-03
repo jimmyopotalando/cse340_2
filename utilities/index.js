@@ -1,6 +1,6 @@
 // utilities/index.js
 
-const invModel = require("../models/inventory-model"); // Adjust path if needed
+const invModel = require("../models/invModel"); // Adjust path if needed
 
 /**
  * Build the vehicle detail HTML view.

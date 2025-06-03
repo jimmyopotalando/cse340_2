@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Add Vehicle Classification</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+
+<body>
+    <main>
+        <h1>Add New Vehicle Classification</h1>
+
+        <% if (message) { %>
+            <div class="flash-message">
+                <%= message %>
+            </div>
+            <% } %>
+
+                <% if (errors && errors.length> 0) { %>
+                    <ul class="error-list">
+                        <% errors.forEach(function(error) { %>
+                            <li>
+                                <%= error.msg %>
+                            </li>
+                            <% }) %>
+                    </ul>
+                    <% } %>
+
+                        <form action="/inv/add-classification" method="post" novalidate>
+                            <label for="classification_name">Classification Name</label>
+                            <input type="text" id="classification_name" name="classification_name"
+                                pattern="^[A-Za-z0-9]+$" required
+                                title="Only letters and numbers allowed, no spaces or special characters">
+                            <p class="form-instruction">
+                                Classification names must not contain spaces or special characters.
+                            </p>
+                            <button type="submit">Add Classification</button>
+                        </form>
+    </main>
+</body>
+
+</html>
