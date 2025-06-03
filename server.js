@@ -3,40 +3,38 @@
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
 require("dotenv").config();
-const static = require("./routes/static");
-const invRoute = require("./routes/inventoryRoute");
+
+const staticRoutes = require("./routes/static");
+const invRoutes = require("./routes/inventoryRoute");
 const baseController = require("./controllers/baseController");
 const utilities = require("./utilities");
 
 const app = express();
 
-// Set up static files and view engine
+// Set up view engine and static files
 app.use(express.static("public"));
 app.use(expressLayouts);
 app.set("view engine", "ejs");
 app.set("layout", "./layouts/layout");
 
-// Body parsing middleware
+// Body parsing
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Start the server
-const port = process.env.PORT || 3000;
-
-app.listen(port, async () => {
+async function startServer() {
   try {
     const nav = await utilities.getNav();
 
-    // Global nav setup
+    // Inject nav into all responses
     app.use((req, res, next) => {
       res.locals.nav = nav;
       next();
     });
 
-    // Routes
-    app.use(static);
-    app.use("/inventory", invRoute);
-    app.get("/", baseController.buildHome); // Use the home controller
+    // Define routes
+    app.use(staticRoutes);
+    app.use("/inventory", invRoutes);
+    app.get("/", baseController.buildHome);
 
     // 404 handler
     app.use((req, res, next) => {
@@ -47,14 +45,21 @@ app.listen(port, async () => {
 
     // Error handler
     app.use((err, req, res, next) => {
-      console.error(err.stack);
+      console.error("❌ Server error:", err);
       res.status(500).render("errors/500", {
         title: "Server Error",
       });
     });
 
-    console.log(`✅ Server is running on port ${port}`);
+    // Start listening
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => {
+      console.log(`✅ Server is running on port ${port}`);
+    });
   } catch (err) {
     console.error("❌ Server failed to start:", err);
+    process.exit(1); // Ensure render detects a failed deployment
   }
-});
+}
+
+startServer();
