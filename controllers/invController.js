@@ -1,7 +1,10 @@
 const invModel = require("../models/invModel");
 const utilities = require("../utilities");
 
-async function buildByInvId(req, res, next) {
+const invController = {};
+
+// Controller: Vehicle Detail View by Inventory ID
+invController.buildByInvId = async function (req, res, next) {
   try {
     const invId = parseInt(req.params.invId);
     if (isNaN(invId)) {
@@ -18,97 +21,80 @@ async function buildByInvId(req, res, next) {
     res.render("inventory/detail", {
       title: `${data.inv_make} ${data.inv_model}`,
       viewHtml,
-      nav: await utilities.getNav(), // Optional if already set globally
+      nav: await utilities.getNav(),
     });
   } catch (error) {
     console.error("Error in buildByInvId:", error);
     next(error);
   }
-}
-
-module.exports = {
-  buildByInvId,
 };
 
-
-
-
-const invController = {}
-
+// Controller: Inventory Management Page
 invController.buildManagementView = async function (req, res, next) {
   try {
     res.render("inventory/management", {
       title: "Inventory Management",
-      message: req.flash("notice") // or however you’re passing messages
-    })
+      message: req.flash("notice")
+    });
   } catch (err) {
-    next(err)
+    next(err);
   }
-}
+};
 
-module.exports = invController
-
-
-
-const invModel = require("../models/invModel")
-
-// Show the form
+// Controller: Show Add Classification Form
 invController.showAddClassification = (req, res) => {
   res.render("inventory/add-classification", {
     title: "Add Classification",
     message: req.flash("notice"),
     errors: null
-  })
-}
+  });
+};
 
-// Process the form
+// Controller: Process Add Classification Form
 invController.processAddClassification = async (req, res) => {
-  const { classification_name } = req.body
+  const { classification_name } = req.body;
 
   try {
-    const insertResult = await invModel.addClassification(classification_name)
+    const insertResult = await invModel.addClassification(classification_name);
 
     if (insertResult) {
-      // Update navigation if insertion succeeded
-      const nav = await utilities.getNav()
-      req.flash("notice", "New classification added successfully.")
+      const nav = await utilities.getNav();
+      req.flash("notice", "New classification added successfully.");
       res.status(201).render("inventory/management", {
         title: "Inventory Management",
         nav,
         message: req.flash("notice")
-      })
+      });
     } else {
-      req.flash("notice", "Failed to add classification.")
+      req.flash("notice", "Failed to add classification.");
       res.status(500).render("inventory/add-classification", {
         title: "Add Classification",
         message: req.flash("notice"),
         errors: null
-      })
+      });
     }
   } catch (error) {
-    req.flash("notice", "An error occurred. Try again.")
+    req.flash("notice", "An error occurred. Try again.");
     res.status(500).render("inventory/add-classification", {
       title: "Add Classification",
       message: req.flash("notice"),
       errors: null
-    })
+    });
   }
-}
+};
 
-
-const utilities = require("../utilities")
-const invModel = require("../models/invModel")
-
+// Controller: Show Add Inventory Form
 invController.buildAddInventory = async (req, res) => {
-  let classificationList = await utilities.buildClassificationList()
+  const classificationList = await utilities.buildClassificationList();
   res.render("inventory/add-inventory", {
     title: "Add Inventory",
     classificationList,
     message: req.flash("notice"),
     errors: null
-  })
-}
+  });
+};
 
+// Controller: Process Add Inventory Form
 invController.processAddInventory = async (req, res) => {
   const {
     classification_id,
@@ -121,7 +107,7 @@ invController.processAddInventory = async (req, res) => {
     inv_price,
     inv_miles,
     inv_color
-  } = req.body
+  } = req.body;
 
   const invData = {
     classification_id,
@@ -134,30 +120,33 @@ invController.processAddInventory = async (req, res) => {
     inv_price,
     inv_miles,
     inv_color
-  }
+  };
 
   try {
-    const result = await invModel.addInventory(invData)
+    const result = await invModel.addInventory(invData);
     if (result) {
-      req.flash("notice", "Vehicle added successfully.")
-      const nav = await utilities.getNav()
+      req.flash("notice", "Vehicle added successfully.");
+      const nav = await utilities.getNav();
       res.status(201).render("inventory/management", {
         title: "Inventory Management",
         nav,
         message: req.flash("notice")
-      })
+      });
     } else {
-      throw new Error("Insert failed.")
+      throw new Error("Insert failed.");
     }
   } catch (error) {
-    let classificationList = await utilities.buildClassificationList(classification_id)
-    req.flash("notice", "Failed to add vehicle.")
+    const classificationList = await utilities.buildClassificationList(classification_id);
+    req.flash("notice", "Failed to add vehicle.");
     res.status(500).render("inventory/add-inventory", {
       title: "Add Inventory",
       classificationList,
       message: req.flash("notice"),
       errors: [],
       ...invData
-    })
+    });
   }
-}
+};
+
+module.exports = invController;
+
