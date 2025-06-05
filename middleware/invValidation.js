@@ -1,4 +1,9 @@
-const { body, validationResult } = require("express-validator")
+// middleware/invValidation.js
+
+const { body, validationResult } = require("express-validator");
+const utilities = require("../utilities");
+
+// === Classification Validation ===
 
 const classificationRules = () => {
   return [
@@ -6,30 +11,22 @@ const classificationRules = () => {
       .trim()
       .isLength({ min: 1 }).withMessage("Classification name is required.")
       .matches(/^[A-Za-z0-9]+$/).withMessage("No spaces or special characters allowed.")
-  ]
-}
+  ];
+};
 
 const checkClassificationData = (req, res, next) => {
-  const errors = validationResult(req)
+  const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.render("inventory/add-classification", {
       title: "Add Classification",
       message: null,
       errors: errors.array()
-    })
+    });
   }
-  next()
-}
+  next();
+};
 
-module.exports = {
-  classificationRules,
-  checkClassificationData
-}
-
-
-
-
-const { body, validationResult } = require("express-validator")
+// === Inventory Validation ===
 
 const inventoryRules = () => {
   return [
@@ -42,12 +39,12 @@ const inventoryRules = () => {
     body("inv_price").isFloat({ min: 0 }).withMessage("Price must be a positive number."),
     body("inv_miles").isInt({ min: 0 }).withMessage("Miles must be a positive number."),
     body("inv_color").trim().notEmpty().withMessage("Color is required.")
-  ]
-}
+  ];
+};
 
 const checkInventoryData = async (req, res, next) => {
-  const errors = validationResult(req)
-  const classificationList = await require("../utilities").buildClassificationList(req.body.classification_id)
+  const errors = validationResult(req);
+  const classificationList = await utilities.buildClassificationList(req.body.classification_id);
   if (!errors.isEmpty()) {
     return res.render("inventory/add-inventory", {
       title: "Add Inventory",
@@ -55,12 +52,16 @@ const checkInventoryData = async (req, res, next) => {
       message: null,
       errors: errors.array(),
       ...req.body
-    })
+    });
   }
-  next()
-}
+  next();
+};
+
+// === Exports ===
 
 module.exports = {
+  classificationRules,
+  checkClassificationData,
   inventoryRules,
   checkInventoryData
-}
+};
