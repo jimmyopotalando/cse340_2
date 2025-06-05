@@ -1,6 +1,6 @@
 // models/inventory-model.js
 
-const pool = require("../database");
+const pool = require("../database"); // Or "../db" — make sure this path is correct!
 
 // Get all vehicle classifications for navigation
 async function getClassifications() {
@@ -26,40 +26,29 @@ async function getInventoryById(invId) {
   }
 }
 
-module.exports = {
-  getClassifications,
-  getInventoryById,
-};
-
-
-
-const pool = require("../db") // adjust according to your setup
-
+// Add a classification
 async function addClassification(classification_name) {
   try {
     const sql = `
       INSERT INTO classification (classification_name)
       VALUES ($1) RETURNING *;
-    `
-    const data = await pool.query(sql, [classification_name])
-    return data.rows[0]
+    `;
+    const data = await pool.query(sql, [classification_name]);
+    return data.rows[0];
   } catch (error) {
-    console.error("Database insert error:", error)
-    return null
+    console.error("Database insert error (addClassification):", error);
+    return null;
   }
 }
 
-module.exports = { addClassification }
-
-
-
+// Add a new vehicle to inventory
 async function addInventory(data) {
   try {
     const sql = `
       INSERT INTO inventory (classification_id, inv_make, inv_model, inv_year, inv_description, 
-      inv_image, inv_thumbnail, inv_price, inv_miles, inv_color) 
+        inv_image, inv_thumbnail, inv_price, inv_miles, inv_color) 
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *;
-    `
+    `;
     const values = [
       data.classification_id,
       data.inv_make,
@@ -71,11 +60,19 @@ async function addInventory(data) {
       data.inv_price,
       data.inv_miles,
       data.inv_color
-    ]
-    const result = await pool.query(sql, values)
-    return result.rows[0]
+    ];
+    const result = await pool.query(sql, values);
+    return result.rows[0];
   } catch (error) {
-    console.error("DB Error:", error)
-    return null
+    console.error("DB Error (addInventory):", error);
+    return null;
   }
 }
+
+// Export all functions from a single place
+module.exports = {
+  getClassifications,
+  getInventoryById,
+  addClassification,
+  addInventory
+};
