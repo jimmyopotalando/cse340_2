@@ -1,8 +1,4 @@
 // server.js
-const inventoryRoutes = require("./routes/invRoute")
-app.use("/inv", inventoryRoutes)
-
-
 
 const express = require("express");
 const expressLayouts = require("express-ejs-layouts");
@@ -13,7 +9,7 @@ const invRoutes = require("./routes/invRoute");
 const baseController = require("./controllers/baseController");
 const utilities = require("./utilities");
 
-const app = express();
+const app = express(); // ✅ app defined before use
 
 // Set up view engine and static files
 app.use(express.static("public"));
@@ -37,7 +33,7 @@ async function startServer() {
 
     // Define routes
     app.use(staticRoutes);
-    app.use("/inventory", invRoutes);
+    app.use("/inventory", invRoutes); // ✅ Inventory routes
     app.get("/", baseController.buildHome);
 
     // 404 handler
@@ -55,14 +51,14 @@ async function startServer() {
       });
     });
 
-    // Start listening
+    // Start server
     const port = process.env.PORT || 3000;
     app.listen(port, () => {
       console.log(`✅ Server is running on port ${port}`);
     });
   } catch (err) {
     console.error("❌ Server failed to start:", err);
-    process.exit(1); // Ensure render detects a failed deployment
+    process.exit(1); // Ensures Render detects a failed deployment
   }
 }
 
