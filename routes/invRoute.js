@@ -11,11 +11,6 @@ module.exports = router;
 
 
 
-
-const express = require("express")
-const router = new express.Router()
-const invController = require("../controllers/invController")
-
 // Route for the inventory management view
 router.get("/", invController.buildManagementView)
 
@@ -24,7 +19,7 @@ module.exports = router
 
 
 
-const express = require("express")
+
 const router = new express.Router()
 const invController = require("../controllers/invController")
 const invValidation = require("../middleware/invValidation")
