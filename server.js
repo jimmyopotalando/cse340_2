@@ -1,65 +1,129 @@
-// server.js
+/* ******************************************
+ * This server.js file is the primary file of the 
+ * application. It is used to control the project.
+ *******************************************/
+/* ***********************
+ * Require Statements
+ *************************/
+const express = require("express")
+const expressLayouts = require("express-ejs-layouts")
+const env = require("dotenv").config()
+const app = express()
+const static = require("./routes/static")
+const baseController = require("./controllers/baseController")
+const inventoryRoute = require("./routes/inventoryRoute")
+const accountRoute = require("./routes/accountRoute")
+const utilities = require("./utilities/")
+const session = require("express-session")
+const pool = require('./database/')
+const bodyParser = require("body-parser")
+const cookieParser = require("cookie-parser")
 
-const express = require("express");
-const expressLayouts = require("express-ejs-layouts");
-require("dotenv").config();
+/* ***********************
+ * Middleware
+ * Between the request and response
+ * ************************/
+// Unit 4, Sessions & Messages Activity
+app.use(
+  session({
+    store: new (require("connect-pg-simple")(session))({
+      createTableIfMissing: true,
+      pool,
+    }),
+    secret: process.env.SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+    name: "sessionId",
+  })
+)
+// Unit 4, Sessions & Messages Activity
+// Express Messages Middleware
+app.use(require("connect-flash")())
+app.use(function (req, res, next) {
+  res.locals.messages = require("express-messages")(req, res)
+  next()
+})
+// Unit 4, Process Registration Activity
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
-const staticRoutes = require("./routes/static");
-const invRoutes = require("./routes/invRoute");
-const baseController = require("./controllers/baseController");
-const utilities = require("./utilities");
 
-const app = express(); // ✅ app defined before use
+// Express Messages Middleware
+app.use(require('connect-flash')())
+app.use(function(req, res, next){
+  res.locals.messages = require('express-messages')(req, res)
+  next()
+})
 
-// Set up view engine and static files
-app.use(express.static("public"));
-app.use(expressLayouts);
-app.set("view engine", "ejs");
-app.set("layout", "./layouts/layout");
+// Unit 4, Process Registration Activity
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
-// Body parsing
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Unit 5 Authentication cookie use
+app.use(cookieParser())
 
-async function startServer() {
-  try {
-    const nav = await utilities.getNav();
+/* ***********************
+ * View Engine And Templates
+ *************************/
+app.set("view engine", "ejs")
+app.use(expressLayouts)
+app.set("layout", "./layouts/layout") // not at views root
 
-    // Inject nav into all responses
-    app.use((req, res, next) => {
-      res.locals.nav = nav;
-      next();
-    });
 
-    // Define routes
-    app.use(staticRoutes);
-    app.use("/inventory", invRoutes); // ✅ Inventory routes
-    app.get("/", baseController.buildHome);
 
-    // 404 handler
-    app.use((req, res, next) => {
-      res.status(404).render("errors/404", {
-        title: "Page Not Found",
-      });
-    });
 
-    // Error handler
-    app.use((err, req, res, next) => {
-      console.error("❌ Server error:", err);
-      res.status(500).render("errors/500", {
-        title: "Server Error",
-      });
-    });
 
-    // Start server
-    const port = process.env.PORT || 3000;
-    app.listen(port, () => {
-      console.log(`✅ Server is running on port ${port}`);
-    });
-  } catch (err) {
-    console.error("❌ Server failed to start:", err);
-    process.exit(1); // Ensures Render detects a failed deployment
+/* ***********************
+ * Routes
+ *************************/
+app.use(static)
+// Index route - Unit 3, Robust Error Handling activity
+app.get("/", utilities.handleErrors(baseController.buildHome))
+// Inventory routes - Unit 3, Build Inventory route activity
+app.use("/inv", inventoryRoute)
+// Account routes - Unit 4, Deliver Login activity
+app.use("/account", accountRoute)
+
+
+
+// File Not Found Route - must be last route in list
+app.use(async (req, res, next) => {
+  next({status: 404, message: 'Sorry, we appear to have lost that page.'})
+})
+
+
+/* ***********************
+* Express Error Handler
+* Place after all other middleware
+*************************/
+app.use(async (err, req, res, next) => {
+  let nav = await utilities.getNav()
+  console.error(`Error at: "${req.originalUrl}": ${err.message}`)
+  if (err.status == 404) {
+    message = err.message
+  } else {
+    message = "Oh no! There was a crash. Maybe try a different route?"
   }
-}
+  res.render("errors/error", {
+    title: err.status || "Server Error",
+    message,
+    nav,
+  })
+})
 
-startServer();
+
+
+
+/* ***********************
+ * Local Server Information
+ * Values from .env (environment) file
+ *************************/
+const port = process.env.PORT
+const host = process.env.HOST
+
+/* ***********************
+ * Log statement to confirm server operation
+ *************************/
+app.listen(port, () => {
+  console.log(`app listening on ${host}:${port}`)
+})

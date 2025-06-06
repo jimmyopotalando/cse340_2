@@ -1,18 +1,15 @@
-// routes/static.js
-
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
-// Example static content routes
-router.get("/about", (req, res) => {
-  res.render("about", { title: "About Us" });
-});
-
-router.get("/contact", (req, res) => {
-  res.render("contact", { title: "Contact Us" });
-});
+// Static Routes
+// Set up "public" folder / subfolders for static files
+router.use(express.static("public"));
+router.use("/css", express.static(__dirname + "public/css"));
+router.use("/js", express.static(__dirname + "public/js"));
+router.use("/images", express.static(__dirname + "public/images"));
 
 module.exports = router;
+
 
 
 

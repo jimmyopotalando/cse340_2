@@ -1,25 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+<%# Unit 4, Assignment 4, Task 3 %>
+    <% if (title) {%>
+        <h1>
+            <%= title %>
+        </h1>
+        <%} else {res.redirect('/')} %>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Add Vehicle Inventory</title>
-    <link rel="stylesheet" href="/css/styles.css">
-</head>
+            <%- messages() %>
 
-<body>
-    <main>
-        <h1>Add New Vehicle</h1>
-
-        <% if (message) { %>
-            <div class="flash-message">
-                <%= message %>
-            </div>
-            <% } %>
-
-                <% if (errors && errors.length> 0) { %>
-                    <ul class="error-list">
-                        <% errors.forEach(function(error) { %>
+                <% if (errors) { %>
+                    <ul class="message warning">
+                        <% errors.array().forEach(error=> { %>
                             <li>
                                 <%= error.msg %>
                             </li>
@@ -27,50 +17,92 @@
                     </ul>
                     <% } %>
 
-                        <form action="/inv/add-inventory" method="post" novalidate>
+                        <div id="registerContainer">
+                            <p>All fields are required.</p>
+                            <form action="/inv/addInventory" method="post">
+                                <fieldset>
+                                    <label for="classificationList">Classification</label>
+                                    <%- classificationSelect %>
 
-                            <!-- Classification dropdown -->
-                            <label for="classificationList">Classification</label>
-                            <%- classificationList %>
+                                        <label for="invMake">Make</label>
+                                        <input type="text" name="inv_make" id="invMake" required minlength="3"
+                                            placeholder="Min of 3 characters" <% if(locals.inv_make) { %> value="<%=
+                                            locals.inv_make %>" <% } %>>
 
-                                <label for="inv_make">Make</label>
-                                <input type="text" id="inv_make" name="inv_make" required value="<%= inv_make || '' %>">
+                                                <label for="invModel">Model</label>
+                                                <input type="text" name="inv_model" id="invModel" required minlength="3"
+                                                    placeholder="Min of 3 characters" <% if(locals.inv_model) { %>
+                                                value="<%= locals.inv_model %>" <% } %>>
 
-                                <label for="inv_model">Model</label>
-                                <input type="text" id="inv_model" name="inv_model" required
-                                    value="<%= inv_model || '' %>">
+                                                        <label for="invDescription">Description</label>
+                                                        <textarea id="invDescription" name="inv_description"
+                                                            required><% if(locals.inv_description) { %><%= locals.inv_description %><% } %></textarea>
 
-                                <label for="inv_year">Year</label>
-                                <input type="number" id="inv_year" name="inv_year" required min="1900" max="2100"
-                                    value="<%= inv_year || '' %>">
+                                                        <label for="invImage">Image Path</label>
+                                                        <input type="text" name="inv_image" id="invImage" size="30"
+                                                            required <% if(locals.inv_image) { %> value="<%=
+                                                            locals.inv_image %>" <% } else { %>
+                                                                value="/images/vehicles/no-image.png" <% } %>>
 
-                                <label for="inv_description">Description</label>
-                                <textarea id="inv_description" name="inv_description"
-                                    required><%= inv_description || '' %></textarea>
+                                                                    <label for="invThumbnail">Thumbnail Path</label>
+                                                                    <input type="text" name="inv_thumbnail"
+                                                                        id="invThumbnail" size="30" required <%
+                                                                        if(locals.inv_image) { %> value="<%=
+                                                                        locals.inv_image %>" <% } else { %>
+                                                                            value="/images/vehicles/no-image.png" <% }
+                                                                                %>>
 
-                                <label for="inv_image">Image Path</label>
-                                <input type="text" id="inv_image" name="inv_image" required
-                                    value="<%= inv_image || '/images/vehicles/no-image.png' %>">
+                                                                                <label for="invPrice">Price</label>
+                                                                                <input type="text" name="inv_price"
+                                                                                    id="invPrice" size="10"
+                                                                                    placeholder="decimal or integer numbers only"
+                                                                                    required
+                                                                                    pattern="^[1-9]\d*(\.\d+)?$" <%
+                                                                                    if(locals.inv_price) { %> value="<%=
+                                                                                    locals.inv_price %>" <% } %>>
 
-                                <label for="inv_thumbnail">Thumbnail Path</label>
-                                <input type="text" id="inv_thumbnail" name="inv_thumbnail" required
-                                    value="<%= inv_thumbnail || '/images/vehicles/no-image.png' %>">
+                                                                                        <label
+                                                                                            for="invYear">Year</label>
+                                                                                        <input type="text"
+                                                                                            name="inv_year" id="invYear"
+                                                                                            size="10"
+                                                                                            placeholder="4-digit year"
+                                                                                            required minlength="4"
+                                                                                            maxlength="4"
+                                                                                            pattern="^(19|20)\d{2}$" <%
+                                                                                            if(locals.inv_year) { %>
+                                                                                        value="<%= locals.inv_year %>"
+                                                                                            <% } %>>
 
-                                <label for="inv_price">Price</label>
-                                <input type="number" id="inv_price" name="inv_price" step="0.01" required
-                                    value="<%= inv_price || '' %>">
+                                                                                                <label
+                                                                                                    for="invMiles">Miles</label>
+                                                                                                <input type="text"
+                                                                                                    name="inv_miles"
+                                                                                                    id="invMiles"
+                                                                                                    size="10"
+                                                                                                    placeholder="digits only"
+                                                                                                    required
+                                                                                                    pattern="^\d+$" <%
+                                                                                                    if(locals.inv_miles)
+                                                                                                    { %> value="<%=
+                                                                                                    locals.inv_miles %>"
+                                                                                                    <% } %>>
 
-                                <label for="inv_miles">Miles</label>
-                                <input type="number" id="inv_miles" name="inv_miles" required
-                                    value="<%= inv_miles || '' %>">
+                                                                                                        <label
+                                                                                                            for="invColor">Color</label>
+                                                                                                        <input
+                                                                                                            type="text"
+                                                                                                            name="inv_color"
+                                                                                                            id="invColor"
+                                                                                                            required <%
+                                                                                                            if(locals.inv_color)
+                                                                                                            { %> value="
+                                                                                                        <%= locals.inv_color
+                                                                                                            %>" <% } %>>
 
-                                <label for="inv_color">Color</label>
-                                <input type="text" id="inv_color" name="inv_color" required
-                                    value="<%= inv_color || '' %>">
-
-                                <button type="submit">Add Vehicle</button>
-                        </form>
-    </main>
-</body>
-
-</html>
+                                                                                                                <button
+                                                                                                                    type="submit">Add
+                                                                                                                    Vehicle</button>
+                                </fieldset>
+                            </form>
+                            </div>

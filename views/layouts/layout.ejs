@@ -1,21 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+<%- include('../partials/head') %>
 
-<head>
-    <%- include('../partials/head') %>
-</head>
+    <body>
+        <div id="wrapper">
+            <%- include('../partials/header') %>
+                <%- include('../partials/navigation') %>
 
-<body>
-    <div id="wrapper">
-        <%- include('../partials/header') %>
-            <%- include('../partials/nav') %>
+                    <main>
+                        <%- body %>
+                    </main>
 
-                <main>
-                    <%- body %> <!-- This will be filled by child views -->
-                </main>
-
-                <%- include('../partials/footer') %>
-    </div>
-</body>
+                    <%- include('../partials/footer') %>
+        </div>
+    </body>
 
 </html>

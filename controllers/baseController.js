@@ -1,22 +1,15 @@
-// controllers/baseController.js
+const utilities = require("../utilities")
+const baseController = {}
 
-/**
- * Controller to build and render the home page.
- */
-const buildHome = async (req, res) => {
-  try {
-    res.render("index", {
-      title: "Welcome to the Vehicle Inventory App",
-      message: "Explore our inventory and manage vehicle records efficiently.",
-    });
-  } catch (error) {
-    console.error("Error rendering home page:", error);
-    res.status(500).render("errors/500", {
-      title: "Server Error",
-    });
-  }
-};
+/* ***************************
+ *  Build Home view with MVC
+ *  Unit 3, MVC: Get Started Activity
+ *  Flash message Unit 4, Sessions & Messages activity
+ * ************************** */
+baseController.buildHome = async function (req, res) {
+  const nav = await utilities.getNav()
+  // req.flash("notice", "This is a flash message.")
+  res.render("index", { title: "Home", nav })
+}
 
-module.exports = {
-  buildHome,
-};
+module.exports = baseController
