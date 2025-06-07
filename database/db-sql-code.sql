@@ -1,4 +1,4 @@
---
+
 -- Database: 'cse 340 project', .public schema 
 -- Assignment 2, Task 2
 --
