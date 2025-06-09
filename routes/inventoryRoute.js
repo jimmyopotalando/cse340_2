@@ -1,27 +1,31 @@
 // Needed Resources 
-const express = require("express")
-const router = new express.Router() 
-const invController = require("../controllers/invController")
-const utilities = require("../utilities")
-const invChecks = require("../utilities/inventory-validation")
+const express = require("express");
+const router = express.Router();
+
+const invController = require("../controllers/invController");
+const inventoryController = require("../controllers/inventoryController");
+
+const utilities = require("../utilities");
+const invChecks = require("../utilities/inventory-validation");
+const { checkEmployeeOrAdmin } = require("../utilities/permissions");
 
 /* ****************************************
  * Route to build inventory by classification view
  **************************************** */
-router.get("/type/:classificationId", invController.buildByClassificationId)
+router.get("/type/:classificationId", invController.buildByClassificationId);
 
 /* ****************************************
  * Route to build vehicle detail view
  **************************************** */
 router.get("/detail/:id", 
-  utilities.handleErrors(invController.buildDetail))
+  utilities.handleErrors(invController.buildDetail));
 
 /* ****************************************
  * Error Route
  * Assignment 3, Task 3
  **************************************** */
 router.get("/broken", 
-  utilities.handleErrors(invController.throwError))
+  utilities.handleErrors(invController.throwError));
 
 /* ****************************************
  * Build Management View Route
@@ -29,43 +33,49 @@ router.get("/broken",
  * checkAccountType added Unit 5, Assignment 5, Task 2
  **************************************** */
 router.get("/", 
-  // utilities.checkAccountType,
-  utilities.handleErrors(invController.buildManagementView))
+  utilities.handleErrors(invController.buildManagementView));
 
 /* ****************************************
  * Build add-classification View Route
- * Assignment 4, Task 2
  **************************************** */
 router.get("/newClassification", 
-  // utilities.checkAccountType,
-  utilities.handleErrors(invController.newClassificationView))
+  utilities.handleErrors(invController.newClassificationView));
 
 /* ****************************************
  * Process add-classification Route
- * Assignment 4, Task 2
  **************************************** */
 router.post("/addClassification", 
-  // utilities.checkAccountType,
   invChecks.classificationRule(),
   invChecks.checkClassificationData,
-  utilities.handleErrors(invController.addClassification))
+  utilities.handleErrors(invController.addClassification));
 
 /* ****************************************
  * Build add-vehicle View Route
- * Assignment 4, Task 3
  **************************************** */
 router.get("/newVehicle", 
-  // utilities.checkAccountType,
-  utilities.handleErrors(invController.newInventoryView))
+  utilities.handleErrors(invController.newInventoryView));
 
 /* ****************************************
  * Process add-vehicle Route
- * Assignment 4, Task 3
  **************************************** */
 router.post("/addInventory", 
-  // utilities.checkAccountType,
   invChecks.newInventoryRules(),
   invChecks.checkInventoryData,
-  utilities.handleErrors(invController.addInventory))
+  utilities.handleErrors(invController.addInventory));
 
-module.exports = router
+/* ****************************************
+ * Admin/Employee Protected Inventory Routes
+ **************************************** */
+router.get("/add-classification", checkEmployeeOrAdmin, inventoryController.buildAddClassification);
+router.post("/add-classification", checkEmployeeOrAdmin, inventoryController.addClassification);
+
+router.get("/add-inventory", checkEmployeeOrAdmin, inventoryController.buildAddInventory);
+router.post("/add-inventory", checkEmployeeOrAdmin, inventoryController.addInventory);
+
+router.get("/edit/:inv_id", checkEmployeeOrAdmin, inventoryController.buildEditInventory);
+router.post("/update/", checkEmployeeOrAdmin, inventoryController.updateInventory);
+
+router.get("/delete/:inv_id", checkEmployeeOrAdmin, inventoryController.buildDeleteInventory);
+router.post("/delete/", checkEmployeeOrAdmin, inventoryController.deleteInventory);
+
+module.exports = router;

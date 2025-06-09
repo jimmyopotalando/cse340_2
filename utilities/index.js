@@ -127,3 +127,40 @@ Util.handleErrors = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next)
 
 module.exports = Util
+
+
+
+
+
+
+const jwt = require("jsonwebtoken")
+require("dotenv").config()
+
+function checkLogin(req, res, next) {
+  const token = req.cookies.jwt
+  if (!token) {
+    res.locals.loggedin = false
+    return next()
+  }
+
+  jwt.verify(token, process.env.JWT_SECRET, function (err, accountData) {
+    if (err) {
+      res.locals.loggedin = false
+      return next()
+    }
+
+    res.locals.loggedin = true
+    res.locals.accountData = accountData // Make name & id available
+    next()
+  })
+}
+
+module.exports = {
+  checkLogin,
+  // ... other exports
+}
+
+
+
+
+

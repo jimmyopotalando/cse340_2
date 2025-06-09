@@ -125,3 +125,51 @@ validate.checkLoginData = async (req, res, next) => {
   next()
 }
 module.exports = validate
+
+
+
+
+
+
+const { body, validationResult } = require("express-validator");
+const accountModel = require("../models/accountModel");
+
+exports.accountUpdateRules = () => [
+  body("firstname").notEmpty().withMessage("First name is required."),
+  body("lastname").notEmpty().withMessage("Last name is required."),
+  body("email")
+    .isEmail().withMessage("Valid email required.")
+    .custom(async (email, { req }) => {
+      const existing = await accountModel.getAccountByEmail(email);
+      if (existing && existing.account_id != req.body.account_id) {
+        throw new Error("Email already in use.");
+      }
+    })
+];
+
+exports.checkAccountUpdateData = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash("errors", errors.array());
+    return res.redirect(`/account/update/${req.body.account_id}`);
+  }
+  next();
+};
+
+
+
+
+exports.passwordRules = () => [
+  body("password")
+    .isStrongPassword()
+    .withMessage("Password must be at least 8 characters, include uppercase, lowercase, a number, and a special character.")
+];
+
+exports.checkPasswordData = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    req.flash("errors", errors.array());
+    return res.redirect(`/account/update/${req.body.account_id}`);
+  }
+  next();
+};

@@ -32,3 +32,43 @@ async function checkExistingEmail(account_email){
   }
 }
 module.exports = { registerAccount, checkExistingEmail }
+
+
+
+
+
+
+const pool = require("../db/");
+
+async function getAccountById(account_id) {
+  const result = await pool.query(
+    "SELECT account_id, firstname, lastname, email, account_type FROM account WHERE account_id = $1",
+    [account_id]
+  );
+  return result.rows[0];
+}
+
+
+
+async function updateAccount(account_id, firstname, lastname, email) {
+  const result = await pool.query(
+    `UPDATE account 
+     SET firstname = $1, lastname = $2, email = $3 
+     WHERE account_id = $4`,
+    [firstname, lastname, email, account_id]
+  );
+  return result.rowCount > 0;
+}
+
+
+
+
+async function updatePassword(account_id, hashedPassword) {
+  const result = await pool.query(
+    `UPDATE account 
+     SET password = $1 
+     WHERE account_id = $2`,
+    [hashedPassword, account_id]
+  );
+  return result.rowCount > 0;
+}

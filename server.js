@@ -80,3 +80,34 @@ const host = process.env.HOST
 app.listen(port, () => {
   console.log(`app listening on ${host}:${port}`)
 })
+
+
+
+
+
+
+
+const utilities = require("./utilities")
+
+// Apply to all views
+app.use(utilities.checkLogin)
+
+
+
+
+
+const session = require("express-session");
+const flash = require("connect-flash");
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true
+}));
+
+app.use(flash());
+
+app.use((req, res, next) => {
+  res.locals.notice = req.flash("notice");
+  next();
+});

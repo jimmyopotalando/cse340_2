@@ -84,4 +84,103 @@ async function registerAccount(req, res) {
 }
 
 
-module.exports = { buildLogin,buildRegister,registerAccount }
+module.exports = { buildLogin, buildRegister, registerAccount }
+
+
+
+
+
+accountController.buildAccountManagement = async function (req, res) {
+    try {
+      const accountData = res.locals.accountData;
+      res.render("account/management", {
+        title: "Account Management",
+        accountData,
+      });
+    } catch (err) {
+      console.error("Error loading management view:", err);
+      res.redirect("/account/login");
+    }
+  };
+  
+
+
+
+
+
+
+  const accountModel = require("../models/accountModel");
+
+accountController.getUpdateView = async (req, res) => {
+  const account_id = req.params.account_id;
+  const accountData = await accountModel.getAccountById(account_id);
+
+  res.render("account/update", {
+    title: "Update Account",
+    accountData,
+    errors: req.flash("errors"),
+    message: req.flash("message")
+  });
+};
+
+
+
+
+accountController.updateAccount = async (req, res) => {
+    const { account_id, firstname, lastname, email } = req.body;
+  
+    const updateResult = await accountModel.updateAccount(account_id, firstname, lastname, email);
+  
+    if (updateResult) {
+      req.flash("message", "Account updated successfully.");
+    } else {
+      req.flash("message", "Account update failed.");
+    }
+  
+    const accountData = await accountModel.getAccountById(account_id);
+    res.render("account/management", {
+      title: "Account Management",
+      accountData,
+      message: req.flash("message")
+    });
+  };
+
+  
+
+
+  const bcrypt = require("bcrypt");
+
+accountController.updatePassword = async (req, res) => {
+  const { account_id, password } = req.body;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const updateResult = await accountModel.updatePassword(account_id, hashedPassword);
+
+    if (updateResult) {
+      req.flash("message", "Password updated successfully.");
+    } else {
+      req.flash("message", "Password update failed.");
+    }
+
+    const accountData = await accountModel.getAccountById(account_id);
+    res.render("account/management", {
+      title: "Account Management",
+      accountData,
+      message: req.flash("message")
+    });
+  } catch (error) {
+    req.flash("message", "An error occurred.");
+    res.redirect(`/account/update/${account_id}`);
+  }
+};
+
+
+
+
+accountController.logout = (req, res) => {
+    res.clearCookie("jwt"); // Deletes the token
+    req.flash("notice", "You have been logged out.");
+    res.redirect("/");
+  };
+  

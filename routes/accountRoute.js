@@ -44,3 +44,38 @@ router.post(
 )
 
 module.exports = router
+
+
+
+
+
+
+const express = require("express");
+const router = express.Router();
+const accountController = require("../controllers/accountController");
+const validate = require("../utilities/accountValidation");
+
+// Show update view
+router.get("/update/:account_id", accountController.getUpdateView);
+
+// Process account data update
+router.post(
+  "/update-account",
+  validate.accountUpdateRules(),
+  validate.checkAccountUpdateData,
+  accountController.updateAccount
+);
+
+// Process password update
+router.post(
+  "/update-password",
+  validate.passwordRules(),
+  validate.checkPasswordData,
+  accountController.updatePassword
+);
+
+module.exports = router;
+
+
+
+router.get("/logout", accountController.logout);
