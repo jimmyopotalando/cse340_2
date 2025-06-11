@@ -1,5 +1,4 @@
 const invModel = require("../models/inventory-model")
-
 const Util = {}
 
 /* ************************
@@ -127,11 +126,6 @@ Util.handleErrors = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next)
 
 module.exports = Util
-
-
-
-
-
 
 const jwt = require("jsonwebtoken")
 require("dotenv").config()

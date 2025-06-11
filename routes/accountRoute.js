@@ -1,27 +1,23 @@
 /* ************************************
  *  Account routes
- *  Unit 4, deliver login view activity
- *  ******************************** */
+ *  Unit 4 and 5 activities
+ ************************************/
+
 // Needed Resources
 const express = require("express")
-const router = new express.Router()
+const router = express.Router()
 const accountController = require("../controllers/accountController")
 const utilities = require("../utilities")
 const regValidate = require("../utilities/account-validation")
+const validate = require("../utilities/accountValidation") // Used for update routes
 
-/* ************************************
- *  Deliver Login View
- *  Unit 4, deliver login view activity
- *  ******************************** */
+// Deliver Login View
 router.get("/login", utilities.handleErrors(accountController.buildLogin))
 
-/* ************************************
- *  Deliver Registration View
- *  Unit 4, deliver registration view activity
- *  ******************************** */
+// Deliver Registration View
 router.get("/register", utilities.handleErrors(accountController.buildRegister))
 
-
+// Process Registration
 router.post(
   "/register",
   regValidate.registationRules(),
@@ -29,13 +25,7 @@ router.post(
   utilities.handleErrors(accountController.registerAccount)
 )
 
-
-/* ************************************
- *  Process Login
- *  Unit 4, stickiness activity
- *  Modified in Unit 5, Login Process activity
- *  ******************************** */
-
+// Process Login
 router.post(
   "/login",
   regValidate.loginRules(),
@@ -43,39 +33,26 @@ router.post(
   utilities.handleErrors(accountController.accountLogin)
 )
 
-module.exports = router
+// Show Update View
+router.get("/update/:account_id", accountController.getUpdateView)
 
-
-
-
-
-
-const express = require("express");
-const router = express.Router();
-const accountController = require("../controllers/accountController");
-const validate = require("../utilities/accountValidation");
-
-// Show update view
-router.get("/update/:account_id", accountController.getUpdateView);
-
-// Process account data update
+// Process Account Data Update
 router.post(
   "/update-account",
   validate.accountUpdateRules(),
   validate.checkAccountUpdateData,
   accountController.updateAccount
-);
+)
 
-// Process password update
+// Process Password Update
 router.post(
   "/update-password",
   validate.passwordRules(),
   validate.checkPasswordData,
   accountController.updatePassword
-);
+)
 
-module.exports = router;
+// Logout
+router.get("/logout", accountController.logout)
 
-
-
-router.get("/logout", accountController.logout);
+module.exports = router
