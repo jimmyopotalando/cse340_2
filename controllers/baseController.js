@@ -1,6 +1,5 @@
-const utilities = require("../utilities");
-
-const baseController = {};
+const utilities = require("../utilities")
+const baseController = {}
 
 /* ***************************
  *  Build Home view with MVC
@@ -8,17 +7,9 @@ const baseController = {};
  *  Flash message Unit 4, Sessions & Messages activity
  * ************************** */
 baseController.buildHome = async function (req, res) {
-  const nav = await utilities.getNav();
-  // Optionally include a flash message
-  // req.flash("notice", "This is a flash message.");
-  res.render("index", { title: "Home", nav });
-};
+  const nav = await utilities.getNav()
+  // req.flash("notice", "This is a flash message.")
+  res.render("index", { title: "Home", nav })
+}
 
-/* *********************************
- * Task 3: Trigger a 500 Server Error
- * ******************************** */
-baseController.triggerError = async function (req, res, next) {
-  throw new Error("500 Server Error");
-};
-
-module.exports = baseController;
+module.exports = baseController

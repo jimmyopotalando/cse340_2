@@ -1,23 +1,27 @@
 /* ************************************
  *  Account routes
- *  Unit 4 and 5 activities
- ************************************/
-
+ *  Unit 4, deliver login view activity
+ *  ******************************** */
 // Needed Resources
 const express = require("express")
-const router = express.Router()
+const router = new express.Router()
 const accountController = require("../controllers/accountController")
 const utilities = require("../utilities")
 const regValidate = require("../utilities/account-validation")
-const validate = require("../utilities/accountValidation") // Used for update routes
 
-// Deliver Login View
+/* ************************************
+ *  Deliver Login View
+ *  Unit 4, deliver login view activity
+ *  ******************************** */
 router.get("/login", utilities.handleErrors(accountController.buildLogin))
 
-// Deliver Registration View
+/* ************************************
+ *  Deliver Registration View
+ *  Unit 4, deliver registration view activity
+ *  ******************************** */
 router.get("/register", utilities.handleErrors(accountController.buildRegister))
 
-// Process Registration
+
 router.post(
   "/register",
   regValidate.registationRules(),
@@ -25,34 +29,18 @@ router.post(
   utilities.handleErrors(accountController.registerAccount)
 )
 
-// Process Login
+
+/* ************************************
+ *  Process Login
+ *  Unit 4, stickiness activity
+ *  Modified in Unit 5, Login Process activity
+ *  ******************************** */
+
 router.post(
   "/login",
   regValidate.loginRules(),
   regValidate.checkLoginData,
   utilities.handleErrors(accountController.accountLogin)
 )
-
-// Show Update View
-router.get("/update/:account_id", accountController.getUpdateView)
-
-// Process Account Data Update
-router.post(
-  "/update-account",
-  validate.accountUpdateRules(),
-  validate.checkAccountUpdateData,
-  accountController.updateAccount
-)
-
-// Process Password Update
-router.post(
-  "/update-password",
-  validate.passwordRules(),
-  validate.checkPasswordData,
-  accountController.updatePassword
-)
-
-// Logout
-router.get("/logout", accountController.logout)
 
 module.exports = router
