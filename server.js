@@ -97,3 +97,10 @@ const host = process.env.HOST
 app.listen(port, () => {
   console.log(`app listening on ${host}:${port}`)
 })
+
+
+
+
+
+const reviewRoute = require("./routes/reviewRoute")
+app.use("/reviews", reviewRoute)
