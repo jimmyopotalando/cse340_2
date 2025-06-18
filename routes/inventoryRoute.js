@@ -43,7 +43,6 @@ router.post(
 
 // Admin-only routes
 router.use("/admin", checkEmployeeOrAdmin)
-router.get("/admin", inventoryController.adminDashboard)
 router.post("/admin/add", inventoryController.addItem)
 router.post("/admin/edit/:id", inventoryController.editItem)
 router.post("/admin/delete/:id", inventoryController.deleteItem)
