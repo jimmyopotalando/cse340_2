@@ -40,7 +40,7 @@ async function registerAccount(req, res) {
 
   let hashedPassword
   try {
-    hashedPassword = await bcrypt.hashSync(account_password, 10)
+    hashedPassword = await bcrypt.hash(account_password, 10)
   } catch (error) {
     req.flash("notice", 'Sorry, there was an error processing the registration.')
     return res.status(500).render("./account/register", {
@@ -78,4 +78,17 @@ async function registerAccount(req, res) {
  *  Logout Functionality
  **************************************** */
 function logout(req, res) {
-  res.c
+  res.clearCookie("jwt")  // Assuming you're using cookies for JWT storage
+  req.flash("notice", "You have successfully logged out.")
+  res.redirect("/")
+}
+
+/* ****************************************
+ *  Controller Export
+ **************************************** */
+module.exports = {
+  buildLogin,
+  buildRegister,
+  registerAccount,
+  logout
+}

@@ -5,10 +5,10 @@
 const express = require("express")
 const router = new express.Router()
 const accountController = require("../controllers/accountController")
-const accountsController = require("../controllers/accountsController")
+const accountsController = require("../controllers/accountController")
 const utilities = require("../utilities")
 const regValidate = require("../utilities/account-validation")
-const checkJWT = require('../middleware/checkJWT') // middleware to populate req.account
+// middleware to populate req.account
 
 // Deliver Login View
 router.get("/login", utilities.handleErrors(accountController.buildLogin))
@@ -33,7 +33,5 @@ router.post(
 )
 
 // Account Management & Update Views
-router.get('/manage', checkJWT, accountsController.accountManagementView)
-router.get('/update/:id', checkJWT, accountsController.accountUpdateView)
 
 module.exports = router
