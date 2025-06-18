@@ -1,87 +1,51 @@
-// Needed Resources 
+// Needed Resources
 const express = require("express")
-const router = new express.Router() 
+const router = express.Router()
 const invController = require("../controllers/invController")
+const inventoryController = require("../controllers/inventoryController")
 const utilities = require("../utilities")
 const invChecks = require("../utilities/inventory-validation")
+const { checkEmployeeOrAdmin } = require("../middleware/authMiddleware")
 
-router.get("/type/:classificationId", invController.buildByClassificationId);
+// Classification view
+router.get("/type/:classificationId", invController.buildByClassificationId)
 
+// Vehicle detail view
+router.get("/detail/:id", utilities.handleErrors(invController.buildDetail))
 
-/* ****************************************
- * Route to build vehicle detail view
- **************************************** */
-router.get("/detail/:id", 
-utilities.handleErrors(invController.buildDetail))
+// Error test route
+router.get("/broken", utilities.handleErrors(invController.throwError))
 
-/* ****************************************
- * Error Route
- * Assignment 3, Task 3
- **************************************** */
-router.get(
-  "/broken",
-  utilities.handleErrors(invController.throwError)
-)
+// Management view
+router.get("/", utilities.handleErrors(invController.buildManagementView))
 
-/* ****************************************
- * Build Management View Route
- * Assignment 4, Task 1
- * checkAccountType added Unit 5, Assignment 5, Task 2
- **************************************** */
-router.get(
-  "/",
-  //utilities.checkAccountType,
-  utilities.handleErrors(invController.buildManagementView)
-)
+// Add classification view
+router.get("/newClassification", utilities.handleErrors(invController.newClassificationView))
 
-/* ****************************************
- * Build add-classification View Route
- * Assignment 4, Task 2
- * checkAccountType added Unit 5, Assignment 5, Task 2
- **************************************** */
-router.get(
-  "/newClassification",
-  //utilities.checkAccountType,
-  utilities.handleErrors(invController.newClassificationView)
-)
-
-
-/* ****************************************
- * Process add-classification Route
- * Assignment 4, Task 2
- * checkAccountType added Unit 5, Assignment 5, Task 2
- **************************************** */
+// Process new classification
 router.post(
   "/addClassification",
-  //utilities.checkAccountType,
   invChecks.classificationRule(),
   invChecks.checkClassificationData,
   utilities.handleErrors(invController.addClassification)
 )
 
-/* ****************************************
- * Build add-vehicle View Route
- * Assignment 4, Task 3
- * checkAccountType added Unit 5, Assignment 5, Task 2
- **************************************** */
-router.get(
-  "/newVehicle",
-  //utilities.checkAccountType,
-  utilities.handleErrors(invController.newInventoryView)
-)
+// Add vehicle view
+router.get("/newVehicle", utilities.handleErrors(invController.newInventoryView))
 
-/* ****************************************
- * Process add-vehicle Route
- * Assignment 4, Task 3
- * checkAccountType added Unit 5, Assignment 5, Task 2
- **************************************** */
+// Process new vehicle
 router.post(
   "/addInventory",
-  //utilities.checkAccountType,
   invChecks.newInventoryRules(),
   invChecks.checkInventoryData,
   utilities.handleErrors(invController.addInventory)
 )
 
+// Admin-only routes
+router.use("/admin", checkEmployeeOrAdmin)
+router.get("/admin", inventoryController.adminDashboard)
+router.post("/admin/add", inventoryController.addItem)
+router.post("/admin/edit/:id", inventoryController.editItem)
+router.post("/admin/delete/:id", inventoryController.deleteItem)
 
-module.exports = router;
+module.exports = router
