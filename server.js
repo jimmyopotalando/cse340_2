@@ -47,6 +47,13 @@ app.use((req, res, next) => {
   next()
 })
 
+// ✅ ADD THIS MIDDLEWARE TO FIX THE loggedin/accountData ERROR
+app.use((req, res, next) => {
+  res.locals.loggedin = req.session.loggedin || false
+  res.locals.accountData = req.session.accountData || null
+  next()
+})
+
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(cookieParser())
@@ -98,6 +105,6 @@ const host = process.env.HOST || 'localhost'
 /* ***********************
  * Log statement to confirm server operation
  *************************/
-app.listen(port, () => {
+app.listen(port, host, () => {
   console.log(`✅ App listening on http://${host}:${port}`)
 })
