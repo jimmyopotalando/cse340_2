@@ -100,11 +100,12 @@ app.use(async (err, req, res, next) => {
  * Local Server Information
  *************************/
 const port = process.env.PORT || 3000
-const host = process.env.HOST || 'localhost'
 
 /* ***********************
  * Log statement to confirm server operation
  *************************/
-app.listen(port, host, () => {
-  console.log(`✅ App listening on http://${host}:${port}`)
+app.listen(port, '0.0.0.0', () => {
+  console.log(`✅ App listening on http://0.0.0.0:${port}`)
+})
+
 })
